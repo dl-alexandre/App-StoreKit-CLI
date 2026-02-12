@@ -1,0 +1,21 @@
+project_name: iap
+builds:
+  - id: iap
+    main: ./cmd/iap
+    binary: iap
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+brews:
+  - name: iap
+    repository:
+      owner: dl-alexandre
+      name: homebrew-tap
+    homepage: https://github.com/dl-alexandre/App-Store-Server-CLI
+    description: CLI for the App Store Server API
+    license: MIT

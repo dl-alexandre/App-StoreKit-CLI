@@ -1,0 +1,10 @@
+.DS_Store
+bin/
+dist/
+*.log
+*.out
+*.test
+*.exe
+.idea/
+.vscode/
+iap
