@@ -1,3 +1,5 @@
+version: 2
+
 project_name: ask
 builds:
   - id: ask
@@ -11,11 +13,42 @@ builds:
     goarch:
       - amd64
       - arm64
+archives:
+  - id: default
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+release:
+  github:
+    owner: dl-alexandre
+    name: App-StoreKit-CLI
+  draft: false
+  prerelease: auto
+  name_template: "v{{.Version}}"
 brews:
   - name: ask
     repository:
       owner: dl-alexandre
       name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
     homepage: https://github.com/dl-alexandre/App-StoreKit-CLI
     description: CLI for the App Store Server API
     license: MIT
+    test: |
+      system "#{bin}/ask", "version"
+    install: |
+      bin.install "ask"
