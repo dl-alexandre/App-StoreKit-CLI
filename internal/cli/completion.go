@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/validate"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/validate"
 	"github.com/spf13/cobra"
 )
 

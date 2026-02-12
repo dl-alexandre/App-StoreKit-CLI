@@ -34,7 +34,7 @@ func DefaultPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(dir, "iap", "config.yaml"), nil
+	return filepath.Join(dir, "ask", "config.yaml"), nil
 }
 
 func Load(opts Options) (Config, error) {
@@ -58,7 +58,7 @@ func Load(opts Options) (Config, error) {
 		}
 	}
 
-	v.SetEnvPrefix("IAP")
+	v.SetEnvPrefix("ASK")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 	if err := bindEnvKeys(v); err != nil {

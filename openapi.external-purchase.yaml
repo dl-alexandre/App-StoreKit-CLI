@@ -1,0 +1,312 @@
+openapi: 3.0.3
+info:
+  title: External Purchase Server API
+  version: "0.1.0"
+  description: |
+    Pragmatic OpenAPI spec for Apple's External Purchase Server API endpoints.
+    Notes:
+      - JWT (ES256, aud=appstoreconnect-v1) required via Authorization: Bearer <token>.
+      - Schemas are intentionally permissive (additionalProperties: true) to avoid drift.
+
+servers:
+  # Confirmed from sandbox example request:
+  - url: https://api.storekit-sandbox.apple.com
+    description: Sandbox (confirmed)
+  # Assumed production mirror (same path, non-sandbox host):
+  - url: https://api.storekit.apple.com
+    description: Production (mirror of sandbox host; verify in your environment)
+
+tags:
+  - name: externalPurchase
+    description: External purchase reporting and retrieval
+
+paths:
+  /externalPurchase/v1/reports:
+    put:
+      tags: [externalPurchase]
+      operationId: sendExternalPurchaseReport
+      summary: Send External Purchase Report
+      description: |
+        Report external purchase data to Apple.
+        The requestIdentifier you create is used later to retrieve the submitted report.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExternalPurchaseReport"
+            examples:
+              minimalExample:
+                summary: Minimal example (community sample)
+                value:
+                  appAppleId: "1234567890"
+                  bundleId: "com.example.app"
+                  externalPurchaseId: "extp_123"
+                  purchaseTime: "2026-02-11T12:34:56Z"
+                  purchaseAmount:
+                    amount: "9.99"
+                    currencyCode: "EUR"
+                  purchaseLocation:
+                    isoCountryCode: "IT"
+      responses:
+        "200":
+          description: Report accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendReportSuccessResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendReportErrorResponse"
+        "401":
+          description: Unauthorized (JWT missing/invalid)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "409":
+          description: Conflict / duplicate submission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "429":
+          description: Rate limited
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+
+  /externalPurchase/v1/reports/{requestIdentifier}:
+    get:
+      tags: [externalPurchase]
+      operationId: retrieveExternalPurchaseReport
+      summary: Retrieve External Purchase Report
+      description: Retrieve a previously submitted external purchase report by requestIdentifier.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: requestIdentifier
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID that uniquely identifies an external purchase report.
+      responses:
+        "200":
+          description: Report retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RetrieveReportSuccessResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "404":
+          description: Unknown requestIdentifier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "429":
+          description: Rate limited
+          headers:
+            Retry-After:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ExternalPurchaseReport:
+      type: object
+      description: |
+        External purchase report payload. Fields vary depending on report type (tokens with transactions, subscriptions, renewals, refunds, etc).
+        This schema is permissive to accommodate documented variants.
+      additionalProperties: true
+      properties:
+        requestIdentifier:
+          type: string
+          format: uuid
+          description: Client-generated UUID for correlating send/retrieve.
+        appAppleId:
+          type: string
+          description: App Apple ID.
+        bundleId:
+          type: string
+          description: App bundle ID.
+        externalPurchaseId:
+          type: string
+          description: Your external purchase identifier (idempotency key per purchase).
+        purchaseTime:
+          type: string
+          format: date-time
+        purchaseAmount:
+          $ref: "#/components/schemas/PurchaseAmount"
+        purchaseLocation:
+          $ref: "#/components/schemas/PurchaseLocation"
+        lineItems:
+          type: array
+          description: Optional list of detailed line items / transactions for the report.
+          items:
+            $ref: "#/components/schemas/ExternalPurchaseLineItem"
+
+    ExternalPurchaseLineItem:
+      type: object
+      description: Permissive line item container (transactions, renewals, refunds, etc).
+      additionalProperties: true
+      properties:
+        type:
+          type: string
+          description: Line item type discriminator (if used).
+        transactionId:
+          type: string
+        originalTransactionId:
+          type: string
+        productId:
+          type: string
+        purchaseTime:
+          type: string
+          format: date-time
+        amount:
+          $ref: "#/components/schemas/PurchaseAmount"
+        location:
+          $ref: "#/components/schemas/PurchaseLocation"
+
+    PurchaseAmount:
+      type: object
+      additionalProperties: true
+      properties:
+        amount:
+          type: string
+          description: Decimal string (avoid float rounding).
+        currencyCode:
+          type: string
+          description: ISO 4217 currency code.
+      required: [amount, currencyCode]
+
+    PurchaseLocation:
+      type: object
+      additionalProperties: true
+      properties:
+        isoCountryCode:
+          type: string
+          description: ISO 3166-1 alpha-2 country code.
+      required: [isoCountryCode]
+
+    SendReportSuccessResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        requestIdentifier:
+          type: string
+          format: uuid
+        status:
+          type: string
+          description: Success indicator (if present).
+      description: Success response for sending a report.
+
+    RetrieveReportSuccessResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        requestIdentifier:
+          type: string
+          format: uuid
+        report:
+          $ref: "#/components/schemas/ExternalPurchaseReport"
+      description: Success response including the stored report data.
+
+    SendReportErrorResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+        requestIdentifier:
+          type: string
+          format: uuid
+        lineItemErrors:
+          type: array
+          items:
+            $ref: "#/components/schemas/LineItemError"
+      description: Error response for a failed report submission.
+
+    LineItemError:
+      type: object
+      additionalProperties: true
+      properties:
+        index:
+          type: integer
+          description: Index of the line item that failed (if applicable).
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+
+    APIError:
+      type: object
+      additionalProperties: true
+      properties:
+        errorCode:
+          type: string
+        errorMessage:
+          type: string
+        requestId:
+          type: string
+      description: Generic API error envelope (shape may vary).

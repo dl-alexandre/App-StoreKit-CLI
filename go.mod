@@ -1,4 +1,4 @@
-module github.com/dl-alexandre/App-Store-Server-CLI
+module github.com/dl-alexandre/App-StoreKit-CLI
 
 go 1.25.6
 

@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/auth"
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/retry"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/auth"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/retry"
 )
 
 func TestClientRetryAfter(t *testing.T) {

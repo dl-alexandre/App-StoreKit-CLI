@@ -13,7 +13,7 @@ func TestConfigPrecedence(t *testing.T) {
 		t.Fatalf("write config: %v", err)
 	}
 
-	t.Setenv("IAP_KEY_ID", "envkey")
+	t.Setenv("ASK_KEY_ID", "envkey")
 	loaded, err := Load(Options{ConfigPath: path})
 	if err != nil {
 		t.Fatalf("load config: %v", err)

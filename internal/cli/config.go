@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/config"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/config"
 	"github.com/spf13/cobra"
 )
 

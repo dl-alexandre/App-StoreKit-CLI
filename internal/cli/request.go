@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/output"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/output"
 )
 
 func readBody(path string) ([]byte, error) {

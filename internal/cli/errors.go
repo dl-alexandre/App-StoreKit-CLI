@@ -1,6 +1,6 @@
 package cli
 
-import "github.com/dl-alexandre/App-Store-Server-CLI/internal/api"
+import "github.com/dl-alexandre/App-StoreKit-CLI/internal/api"
 
 const (
 	exitSuccess     = 0

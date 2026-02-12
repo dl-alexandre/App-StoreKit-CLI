@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/api"
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/output"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/api"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/output"
 )
 
 func responseData(app *App, resp api.Response) any {

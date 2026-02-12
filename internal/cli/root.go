@@ -9,17 +9,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/api"
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/auth"
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/config"
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/output"
-	"github.com/dl-alexandre/App-Store-Server-CLI/internal/retry"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/api"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/auth"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/config"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/output"
+	"github.com/dl-alexandre/App-StoreKit-CLI/internal/retry"
 	"github.com/spf13/cobra"
 )
 
 type App struct {
 	Config    config.Config
 	Client    api.Client
+	External  api.Client
 	Format    output.Format
 	JQ        string
 	RequestID string
@@ -59,7 +60,7 @@ func Execute() int {
 func newRootCommand() *cobra.Command {
 	opts := &rootOptions{}
 	cmd := &cobra.Command{
-		Use:           "iap",
+		Use:           "ask",
 		Short:         "CLI for the App Store Server API",
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -101,6 +102,7 @@ func newRootCommand() *cobra.Command {
 	cmd.AddCommand(newOrderCommand())
 	cmd.AddCommand(newMessagingCommand())
 	cmd.AddCommand(newConsumptionCommand())
+	cmd.AddCommand(newExternalPurchaseCommand())
 	cmd.AddCommand(newCompletionCommand())
 
 	return cmd
@@ -164,7 +166,25 @@ func buildApp(ctx context.Context, opts *rootOptions) (*App, error) {
 			Backoff:    cfg.RetryBackoff,
 		},
 		RequestID: opts.RequestID,
-		UserAgent: "iap/0.1.0",
+		UserAgent: "ask/0.1.0",
+		Debug:     opts.Debug,
+		DebugOut:  os.Stderr,
+	}
+
+	externalBaseURL, err := resolveExternalPurchaseBaseURL(cfg.Environment)
+	if err != nil {
+		return nil, err
+	}
+	app.External = api.Client{
+		BaseURL: externalBaseURL,
+		HTTP:    httpClient,
+		Signer:  signer,
+		Retry: retry.Config{
+			MaxRetries: cfg.MaxRetries,
+			Backoff:    cfg.RetryBackoff,
+		},
+		RequestID: opts.RequestID,
+		UserAgent: "ask/0.1.0",
 		Debug:     opts.Debug,
 		DebugOut:  os.Stderr,
 	}
@@ -185,6 +205,19 @@ func resolveBaseURL(env string) (string, error) {
 	}
 }
 
+func resolveExternalPurchaseBaseURL(env string) (string, error) {
+	switch env {
+	case "sandbox":
+		return "https://api.storekit-sandbox.apple.com", nil
+	case "production", "":
+		return "https://api.storekit.apple.com", nil
+	case "local-testing":
+		return "", nil
+	default:
+		return "", fmt.Errorf("unsupported environment: %s", env)
+	}
+}
+
 func appOrExit(cmd *cobra.Command) (*App, error) {
 	app := appFromContext(cmd.Context())
 	if app == nil {
@@ -197,7 +230,7 @@ func shouldSkipAppInit(cmd *cobra.Command) bool {
 	if cmd == nil {
 		return false
 	}
-	return strings.HasPrefix(cmd.CommandPath(), "iap config")
+	return strings.HasPrefix(cmd.CommandPath(), "ask config")
 }
 
 func writeError(err error) {
