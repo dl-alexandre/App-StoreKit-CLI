@@ -100,4 +100,4 @@ jobs:
           cache: true
 
       - name: Build
-        run: go build ./cmd/ask
+        run: go build ./...
