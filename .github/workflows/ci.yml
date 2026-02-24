@@ -4,6 +4,11 @@ on:
   push:
     branches: [master, main]
   pull_request:
+    branches: [master, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -18,7 +23,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.25.x"
+          cache: true
 
       - name: Install gofumpt
         run: go install mvdan.cc/gofumpt@latest
@@ -53,12 +59,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.25.x"
+          cache: true
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v7
         with:
-          version: v2.0
+          version: latest
           args: --timeout=5m
 
   race:
@@ -70,7 +77,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.25.x"
+          cache: true
 
       - name: Go test (race)
         run: go test -race ./...
@@ -88,7 +96,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.25.x"
+          cache: true
 
       - name: Build
         run: go build ./cmd/ask
