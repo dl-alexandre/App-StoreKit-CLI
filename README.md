@@ -1,5 +1,7 @@
 # App StoreKit CLI (ask)
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/dl-alexandre/App-StoreKit-CLI)](https://goreportcard.com/report/github.com/dl-alexandre/App-StoreKit-CLI)
+
 `ask` is a Go-based CLI for the App Store Server API and External Purchase Server API.
 
 ## Install (development)
