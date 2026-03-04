@@ -49,6 +49,9 @@ type rootOptions struct {
 }
 
 func Execute() int {
+	// Perform automatic update check on startup (non-blocking)
+	AutoUpdateCheck()
+
 	root := newRootCommand()
 	if err := root.Execute(); err != nil {
 		writeError(err)
@@ -104,6 +107,7 @@ func newRootCommand() *cobra.Command {
 	cmd.AddCommand(newConsumptionCommand())
 	cmd.AddCommand(newExternalPurchaseCommand())
 	cmd.AddCommand(newCompletionCommand())
+	cmd.AddCommand(newCheckUpdateCommand())
 
 	return cmd
 }
