@@ -35,7 +35,7 @@ func New(dir string, ttl time.Duration) *Cache {
 func (c *Cache) Get(key string) (any, bool) {
 	path := c.filePath(key)
 
-	data, err := os.ReadFile(path)
+	data, err := os.ReadFile(path) // #nosec G304 - path is constructed from trusted cache directory
 	if err != nil {
 		return nil, false
 	}
@@ -65,7 +65,7 @@ func (c *Cache) Set(key string, value any, ttl time.Duration) error {
 	path := c.filePath(key)
 
 	// Ensure cache directory exists
-	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0750); err != nil {
 		return fmt.Errorf("failed to create cache directory: %w", err)
 	}
 
@@ -86,7 +86,7 @@ func (c *Cache) Set(key string, value any, ttl time.Duration) error {
 		return fmt.Errorf("failed to encode cache entry: %w", err)
 	}
 
-	if err := os.WriteFile(path, encoded, 0644); err != nil {
+	if err := os.WriteFile(path, encoded, 0600); err != nil {
 		return fmt.Errorf("failed to write cache file: %w", err)
 	}
 

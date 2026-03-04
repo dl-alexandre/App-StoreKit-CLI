@@ -2,8 +2,9 @@ package retry
 
 import (
 	"context"
+	"crypto/rand"
 	"math"
-	"math/rand"
+	"math/big"
 	"time"
 )
 
@@ -66,6 +67,8 @@ func Do(ctx context.Context, cfg Config, fn func() Result) Result {
 }
 
 func jitter(base time.Duration) time.Duration {
-	jitterFraction := rand.Float64()*0.4 + 0.8
+	// Use crypto/rand for secure random jitter
+	jitterInt, _ := rand.Int(rand.Reader, big.NewInt(100))
+	jitterFraction := float64(jitterInt.Int64())/100.0*0.4 + 0.8
 	return time.Duration(math.Round(float64(base) * jitterFraction))
 }

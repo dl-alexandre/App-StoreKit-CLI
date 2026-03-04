@@ -85,7 +85,7 @@ func runCheckUpdate(force bool) error {
 	}
 
 	// Cache the result
-	updateCache.Set(cacheKey, info, cacheTTL)
+	_ = updateCache.Set(cacheKey, info, cacheTTL) // #nosec G104 - best effort caching
 
 	return displayUpdateInfo(info)
 }
@@ -218,7 +218,7 @@ func compareVersions(v1, v2 string) int {
 			if idx := strings.IndexAny(part, "-"); idx != -1 {
 				part = part[:idx]
 			}
-			fmt.Sscanf(part, "%d", &num1)
+			_, _ = fmt.Sscanf(part, "%d", &num1) // #nosec G104 - best effort parsing
 		}
 
 		if i < len(parts2) {
@@ -226,7 +226,7 @@ func compareVersions(v1, v2 string) int {
 			if idx := strings.IndexAny(part, "-"); idx != -1 {
 				part = part[:idx]
 			}
-			fmt.Sscanf(part, "%d", &num2)
+			_, _ = fmt.Sscanf(part, "%d", &num2) // #nosec G104 - best effort parsing
 		}
 
 		if num1 < num2 {
@@ -273,7 +273,7 @@ func AutoUpdateCheck() {
 		}
 
 		// Cache the result
-		updateCache.Set(cacheKey, info, cacheTTL)
+		_ = updateCache.Set(cacheKey, info, cacheTTL) // #nosec G104 - best effort caching
 
 		// Only print if update is available
 		if info.UpdateAvailable {

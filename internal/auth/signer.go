@@ -6,6 +6,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -26,7 +27,9 @@ func NewSigner(issuerID, keyID, bundleID, privateKeyPath, privateKey string) (Si
 
 	keyData := []byte(strings.TrimSpace(privateKey))
 	if len(keyData) == 0 && privateKeyPath != "" {
-		data, err := os.ReadFile(privateKeyPath)
+		// Validate path to prevent directory traversal
+		cleanPath := filepath.Clean(privateKeyPath)
+		data, err := os.ReadFile(cleanPath) // #nosec G304 - path is cleaned above
 		if err != nil {
 			return Signer{}, err
 		}

@@ -9,11 +9,11 @@ import (
 
 func Save(path string, cfg Config) error {
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0o755); err != nil {
+	if err := os.MkdirAll(dir, 0750); err != nil {
 		return err
 	}
 
-	data, err := yaml.Marshal(cfg)
+	data, err := yaml.Marshal(cfg) // #nosec G117 - intentionally serializing config including private_key
 	if err != nil {
 		return err
 	}
