@@ -37,12 +37,35 @@ brews:
     repository:
       owner: dl-alexandre
       name: homebrew-tap
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+      branch: master
+      pull_request:
+        enabled: false
     directory: Formula
     homepage: https://github.com/dl-alexandre/App-StoreKit-CLI
     description: CLI for the App Store Server API
     license: MIT
+    skip_upload: "{{ if index .Env \"HOMEBREW_TAP_TOKEN\" }}false{{ else }}true{{ end }}"
     test: |
       system "#{bin}/ask", "version"
     install: |
       bin.install "ask"
+
+# Scoop configuration for Windows
+scoops:
+  - repository:
+      owner: dl-alexandre
+      name: scoop-bucket
+      token: "{{ .Env.SCOOP_BUCKET_TOKEN }}"
+      branch: main
+      pull_request:
+        enabled: false
+    commit_author:
+      name: goreleaserbot
+      email: goreleaser@carlosbecker.com
+    commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
+    directory: bucket
+    description: "CLI for the App Store Server API"
+    homepage: "https://github.com/dl-alexandre/App-StoreKit-CLI"
+    license: MIT
+    skip_upload: "{{ if index .Env \"SCOOP_BUCKET_TOKEN\" }}false{{ else }}true{{ end }}"
