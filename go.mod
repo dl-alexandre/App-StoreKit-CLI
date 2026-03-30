@@ -3,7 +3,7 @@ module github.com/dl-alexandre/App-StoreKit-CLI
 go 1.25.6
 
 require (
-	github.com/dl-alexandre/cli-tools v0.0.0
+	github.com/dl-alexandre/cli-tools v0.0.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/itchyny/gojq v0.12.18
 	github.com/jedib0t/go-pretty/v6 v6.7.8
