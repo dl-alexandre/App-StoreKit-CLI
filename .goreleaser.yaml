@@ -14,6 +14,13 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.gitCommit={{.Commit}}
+      - -X main.buildTime={{.Date}}
+    flags:
+      - -trimpath
 archives:
   - id: default
     format: tar.gz
@@ -24,7 +31,7 @@ archives:
 
 checksum:
   name_template: "checksums.txt"
-  algorithm: sha256
+  algorithm: blake3
 
 release:
   github:
@@ -42,6 +49,10 @@ brews:
       branch: master
       pull_request:
         enabled: false
+    commit_author:
+      name: goreleaserbot
+      email: bot@dl-alexandre.com
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
     directory: Formula
     homepage: https://github.com/dl-alexandre/App-StoreKit-CLI
     description: CLI for the App Store Server API
@@ -52,7 +63,21 @@ brews:
     install: |
       bin.install "ask"
 
-# Scoop configuration for Windows
+flatpak:
+  - app_id: net.ddns.dl-alexandre.ASKCLI
+    runtime: org.freedesktop.Platform
+    runtime_version: "24.08"
+    sdk: org.freedesktop.Sdk
+    finish_args:
+      - --share=network
+      - --filesystem=home
+
+srpm:
+  enabled: true
+  summary: "CLI for the App Store Server API"
+  license: MIT
+  url: https://github.com/dl-alexandre/App-StoreKit-CLI
+
 scoops:
   - repository:
       owner: dl-alexandre
@@ -63,7 +88,7 @@ scoops:
         enabled: false
     commit_author:
       name: goreleaserbot
-      email: goreleaser@carlosbecker.com
+      email: bot@dl-alexandre.com
     commit_msg_template: "Scoop update for {{ .ProjectName }} version {{ .Tag }}"
     directory: bucket
     description: "CLI for the App Store Server API"
