@@ -1,6 +1,6 @@
 module github.com/dl-alexandre/App-StoreKit-CLI
 
-go 1.25.6
+go 1.26.0
 
 require (
 	github.com/dl-alexandre/cli-tools v0.0.1
