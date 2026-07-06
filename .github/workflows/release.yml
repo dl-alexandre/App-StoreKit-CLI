@@ -1,14 +1,23 @@
 name: Release
+
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to release (re-run GoReleaser)'
+        required: true
+        type: string
+
 concurrency:
   group: release-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
   cancel-in-progress: false
 
 permissions:
   contents: write
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
@@ -45,10 +54,15 @@ jobs:
         if: steps.published.outputs.skip == 'true'
         run: |
           echo "Release ${{ steps.tag.outputs.name }} already has ${{ steps.published.outputs.asset_count }} assets — skipping publish"
+
       - uses: actions/setup-go@v6
+        if: steps.published.outputs.skip != 'true'
         with:
           go-version-file: go.mod
-      - uses: goreleaser/goreleaser-action@v7
+
+      - name: Run GoReleaser
+        if: steps.published.outputs.skip != 'true'
+        uses: goreleaser/goreleaser-action@v7
         with:
           distribution: goreleaser
           version: latest
