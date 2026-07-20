@@ -55,7 +55,7 @@ jobs:
         run: |
           echo "Release ${{ steps.tag.outputs.name }} already has ${{ steps.published.outputs.asset_count }} assets — skipping publish"
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         if: steps.published.outputs.skip != 'true'
         with:
           go-version-file: go.mod
