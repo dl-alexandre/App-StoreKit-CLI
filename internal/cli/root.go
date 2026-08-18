@@ -108,6 +108,7 @@ func newRootCommand() *cobra.Command {
 	cmd.AddCommand(newExternalPurchaseCommand())
 	cmd.AddCommand(newCompletionCommand())
 	cmd.AddCommand(newCheckUpdateCommand())
+	cmd.AddCommand(newVersionCommand())
 
 	return cmd
 }
@@ -234,7 +235,11 @@ func shouldSkipAppInit(cmd *cobra.Command) bool {
 	if cmd == nil {
 		return false
 	}
-	return strings.HasPrefix(cmd.CommandPath(), "ask config")
+	path := cmd.CommandPath()
+	return strings.HasPrefix(path, "ask config") ||
+		strings.HasPrefix(path, "ask version") ||
+		strings.HasPrefix(path, "ask completion") ||
+		strings.HasPrefix(path, "ask check-updates")
 }
 
 func writeError(err error) {
