@@ -6,6 +6,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
+	"encoding/json"
 	"encoding/pem"
 	"net/http"
 	"net/http/httptest"
@@ -75,6 +76,62 @@ func TestClientAPIError(t *testing.T) {
 	}
 	if apiErr.Message != "bad request" {
 		t.Fatalf("expected message, got %s", apiErr.Message)
+	}
+}
+
+func TestClientBuildsAuthenticatedRequestAndEncodesQuery(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost || r.URL.Path != "/inApps/v1/test" {
+			t.Errorf("request = %s %s", r.Method, r.URL.Path)
+		}
+		if r.URL.Query().Get("revision") != "r 1" {
+			t.Errorf("revision = %q", r.URL.Query().Get("revision"))
+		}
+		if got := r.Header.Get("X-Request-ID"); got != "request-123" {
+			t.Errorf("X-Request-ID = %q", got)
+		}
+		if got := r.Header.Get("User-Agent"); got != "test-client" {
+			t.Errorf("User-Agent = %q", got)
+		}
+		if got := r.Header.Get("Content-Type"); got != "application/json" {
+			t.Errorf("Content-Type = %q", got)
+		}
+		token := r.Header.Get("Authorization")
+		if len(token) < len("Bearer ") || token[:len("Bearer ")] != "Bearer " {
+			t.Errorf("Authorization = %q", token)
+		}
+		var body map[string]bool
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil || !body["enabled"] {
+			t.Errorf("body = %#v, decode error = %v", body, err)
+		}
+		w.WriteHeader(http.StatusCreated)
+		_, _ = w.Write([]byte(`{"ok":true}`))
+	}))
+	defer server.Close()
+
+	client := Client{BaseURL: server.URL, HTTP: server.Client(), Signer: newTestSigner(t), RequestID: "request-123", UserAgent: "test-client"}
+	response, err := client.Do(context.Background(), http.MethodPost, "/inApps/v1/test", map[string][]string{"revision": {"r 1"}}, []byte(`{"enabled":true}`), "")
+	if err != nil {
+		t.Fatalf("Do() error = %v", err)
+	}
+	if response.Status != http.StatusCreated || string(response.Body) != `{"ok":true}` {
+		t.Errorf("response = %+v", response)
+	}
+}
+
+func TestClientDoesNotRetryClientError(t *testing.T) {
+	var requests int
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		requests++
+		w.WriteHeader(http.StatusForbidden)
+		_, _ = w.Write([]byte(`{"errorCode":"FORBIDDEN"}`))
+	}))
+	defer server.Close()
+
+	client := Client{BaseURL: server.URL, HTTP: server.Client(), Signer: newTestSigner(t), Retry: retry.Config{MaxRetries: 3, Backoff: time.Millisecond}}
+	_, err := client.Do(context.Background(), http.MethodGet, "/inApps/v1/test", nil, nil, "")
+	if err == nil || requests != 1 {
+		t.Fatalf("Do() error = %v, requests = %d; want one 403 request", err, requests)
 	}
 }
 
