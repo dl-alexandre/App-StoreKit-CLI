@@ -2,12 +2,10 @@ package cli
 
 import (
 	"fmt"
-
-	"github.com/spf13/cobra"
 )
 
-func newConsumptionCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newConsumptionCommand() *Command {
+	cmd := &Command{
 		Use:     "consumption",
 		Short:   "Consumption information",
 		Aliases: []string{"cons"},
@@ -18,13 +16,13 @@ func newConsumptionCommand() *cobra.Command {
 	return cmd
 }
 
-func newConsumptionSendCommand() *cobra.Command {
+func newConsumptionSendCommand() *Command {
 	var transactionID string
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "send",
 		Short: "Send consumption information (v2)",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if transactionID == "" {
 				return fmt.Errorf("transaction-id is required")
 			}
@@ -52,13 +50,13 @@ func newConsumptionSendCommand() *cobra.Command {
 	return cmd
 }
 
-func newConsumptionSendV1Command() *cobra.Command {
+func newConsumptionSendV1Command() *Command {
 	var transactionID string
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "send-v1",
 		Short: "Send consumption information (v1)",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if transactionID == "" {
 				return fmt.Errorf("transaction-id is required")
 			}

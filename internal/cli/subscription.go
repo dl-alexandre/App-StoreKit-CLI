@@ -4,11 +4,10 @@ import (
 	"fmt"
 
 	"github.com/dl-alexandre/App-StoreKit-CLI/internal/validate"
-	"github.com/spf13/cobra"
 )
 
-func newSubscriptionCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newSubscriptionCommand() *Command {
+	cmd := &Command{
 		Use:     "subscription",
 		Short:   "Subscription operations",
 		Aliases: []string{"sub"},
@@ -21,13 +20,13 @@ func newSubscriptionCommand() *cobra.Command {
 	return cmd
 }
 
-func newSubscriptionStatusCommand() *cobra.Command {
+func newSubscriptionStatusCommand() *Command {
 	var transactionID string
 	var statuses []string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "status",
 		Short: "Get all subscription statuses",
-		PreRunE: func(cmd *cobra.Command, args []string) error {
+		PreRunE: func(cmd *Command, args []string) error {
 			var err error
 			statuses, err = validate.NormalizeMany("subscription.status", statuses)
 			if err != nil {
@@ -35,7 +34,7 @@ func newSubscriptionStatusCommand() *cobra.Command {
 			}
 			return nil
 		},
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if transactionID == "" {
 				return fmt.Errorf("transaction-id is required")
 			}
@@ -61,13 +60,13 @@ func newSubscriptionStatusCommand() *cobra.Command {
 	return cmd
 }
 
-func newSubscriptionExtendCommand() *cobra.Command {
+func newSubscriptionExtendCommand() *Command {
 	var originalTransactionID string
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "extend",
 		Short: "Extend subscription renewal date",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if originalTransactionID == "" {
 				return fmt.Errorf("original-transaction-id is required")
 			}
@@ -95,12 +94,12 @@ func newSubscriptionExtendCommand() *cobra.Command {
 	return cmd
 }
 
-func newSubscriptionExtendMassCommand() *cobra.Command {
+func newSubscriptionExtendMassCommand() *Command {
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "extend-mass",
 		Short: "Extend renewal date for all active subscribers",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			body, err := readBody(bodyPath)
 			if err != nil {
 				return err
@@ -124,13 +123,13 @@ func newSubscriptionExtendMassCommand() *cobra.Command {
 	return cmd
 }
 
-func newSubscriptionExtendStatusCommand() *cobra.Command {
+func newSubscriptionExtendStatusCommand() *Command {
 	var requestID string
 	var productID string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "extend-status",
 		Short: "Get status of renewal date extension request",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if requestID == "" || productID == "" {
 				return fmt.Errorf("request-id and product-id are required")
 			}

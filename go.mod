@@ -3,11 +3,11 @@ module github.com/dl-alexandre/App-StoreKit-CLI
 go 1.26.0
 
 require (
+	github.com/alecthomas/kong v1.17.0
 	github.com/dl-alexandre/cli-tools v0.0.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/itchyny/gojq v0.12.20
 	github.com/jedib0t/go-pretty/v6 v6.8.3
-	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -16,7 +16,6 @@ require (
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
-	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/itchyny/timefmt-go v0.1.9 // indirect
 	github.com/mattn/go-runewidth v0.0.31 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect

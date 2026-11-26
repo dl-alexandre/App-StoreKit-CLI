@@ -14,7 +14,6 @@ import (
 	"github.com/dl-alexandre/App-StoreKit-CLI/internal/config"
 	"github.com/dl-alexandre/App-StoreKit-CLI/internal/output"
 	"github.com/dl-alexandre/App-StoreKit-CLI/internal/retry"
-	"github.com/spf13/cobra"
 )
 
 type App struct {
@@ -53,6 +52,7 @@ func Execute() int {
 	AutoUpdateCheck()
 
 	root := newRootCommand()
+	root.SetArgs(os.Args[1:])
 	if err := root.Execute(); err != nil {
 		writeError(err)
 		return exitCode(err)
@@ -60,14 +60,13 @@ func Execute() int {
 	return exitSuccess
 }
 
-func newRootCommand() *cobra.Command {
+func newRootCommand() *Command {
 	opts := &rootOptions{}
-	cmd := &cobra.Command{
-		Use:           "ask",
-		Short:         "CLI for the App Store Server API",
-		SilenceUsage:  true,
-		SilenceErrors: true,
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	cmd := &Command{
+		Use:     "ask",
+		Short:   "CLI for the App Store Server API",
+		options: opts,
+		PersistentPreRunE: func(cmd *Command, args []string) error {
 			if shouldSkipAppInit(cmd) {
 				return nil
 			}
@@ -223,7 +222,10 @@ func resolveExternalPurchaseBaseURL(env string) (string, error) {
 	}
 }
 
-func appOrExit(cmd *cobra.Command) (*App, error) {
+func appOrExit(cmd *Command) (*App, error) {
+	if cmd.app != nil {
+		return cmd.app, nil
+	}
 	app := appFromContext(cmd.Context())
 	if app == nil {
 		return nil, errors.New("app context not initialized")
@@ -231,7 +233,7 @@ func appOrExit(cmd *cobra.Command) (*App, error) {
 	return app, nil
 }
 
-func shouldSkipAppInit(cmd *cobra.Command) bool {
+func shouldSkipAppInit(cmd *Command) bool {
 	if cmd == nil {
 		return false
 	}

@@ -3,7 +3,6 @@ package cli
 import (
 	"github.com/dl-alexandre/cli-tools/update"
 	"github.com/dl-alexandre/cli-tools/version"
-	"github.com/spf13/cobra"
 )
 
 // AutoUpdateCheck performs a background update check (for use at startup)
@@ -19,14 +18,14 @@ func AutoUpdateCheck() {
 }
 
 // newCheckUpdateCommand creates the check-updates command
-func newCheckUpdateCommand() *cobra.Command {
+func newCheckUpdateCommand() *Command {
 	var force bool
 	var format string
 
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "check-updates",
 		Short: "Check for available updates",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			checker := update.New(update.Config{
 				CurrentVersion: version.Version,
 				BinaryName:     version.BinaryName,
