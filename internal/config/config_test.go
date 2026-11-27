@@ -37,3 +37,20 @@ func TestConfigValidateRequired(t *testing.T) {
 		t.Fatalf("expected validation error")
 	}
 }
+
+func TestConfigLoadRejectsMalformedFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "broken.yaml")
+	if err := os.WriteFile(path, []byte("issuer_id: [unterminated"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Load(Options{ConfigPath: path}); err == nil {
+		t.Fatal("expected malformed config error")
+	}
+}
+
+func TestConfigValidateRejectsInvalidEnvironment(t *testing.T) {
+	cfg := Config{IssuerID: "issuer", KeyID: "key", BundleID: "bundle", PrivateKey: "key", Environment: "staging"}
+	if err := Validate(cfg); err == nil {
+		t.Fatal("expected invalid environment error")
+	}
+}

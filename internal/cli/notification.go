@@ -2,12 +2,10 @@ package cli
 
 import (
 	"fmt"
-
-	"github.com/spf13/cobra"
 )
 
-func newNotificationCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newNotificationCommand() *Command {
+	cmd := &Command{
 		Use:     "notification",
 		Short:   "Notification operations",
 		Aliases: []string{"notif"},
@@ -19,13 +17,13 @@ func newNotificationCommand() *cobra.Command {
 	return cmd
 }
 
-func newNotificationHistoryCommand() *cobra.Command {
+func newNotificationHistoryCommand() *Command {
 	var paginationToken string
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "history",
 		Short: "Get notification history",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			app, err := appOrExit(cmd)
 			if err != nil {
 				return err
@@ -54,11 +52,11 @@ func newNotificationHistoryCommand() *cobra.Command {
 	return cmd
 }
 
-func newNotificationTestCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newNotificationTestCommand() *Command {
+	cmd := &Command{
 		Use:   "test",
 		Short: "Request test notification",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			app, err := appOrExit(cmd)
 			if err != nil {
 				return err
@@ -74,12 +72,12 @@ func newNotificationTestCommand() *cobra.Command {
 	return cmd
 }
 
-func newNotificationTestStatusCommand() *cobra.Command {
+func newNotificationTestStatusCommand() *Command {
 	var token string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "test-status",
 		Short: "Get test notification status",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if token == "" {
 				return fmt.Errorf("test-notification-token is required")
 			}

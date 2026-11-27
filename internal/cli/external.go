@@ -2,12 +2,10 @@ package cli
 
 import (
 	"fmt"
-
-	"github.com/spf13/cobra"
 )
 
-func newExternalPurchaseCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newExternalPurchaseCommand() *Command {
+	cmd := &Command{
 		Use:   "external",
 		Short: "External purchase reporting",
 	}
@@ -17,12 +15,12 @@ func newExternalPurchaseCommand() *cobra.Command {
 	return cmd
 }
 
-func newExternalSendCommand() *cobra.Command {
+func newExternalSendCommand() *Command {
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "send",
 		Short: "Send external purchase report",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			body, err := readBody(bodyPath)
 			if err != nil {
 				return err
@@ -49,12 +47,12 @@ func newExternalSendCommand() *cobra.Command {
 	return cmd
 }
 
-func newExternalGetCommand() *cobra.Command {
+func newExternalGetCommand() *Command {
 	var requestID string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "get",
 		Short: "Retrieve external purchase report",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if requestID == "" {
 				return fmt.Errorf("request-id is required")
 			}

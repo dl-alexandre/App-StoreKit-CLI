@@ -2,12 +2,10 @@ package cli
 
 import (
 	"fmt"
-
-	"github.com/spf13/cobra"
 )
 
-func newMessagingCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newMessagingCommand() *Command {
+	cmd := &Command{
 		Use:     "messaging",
 		Short:   "Retention messaging operations",
 		Aliases: []string{"msg"},
@@ -19,8 +17,8 @@ func newMessagingCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingImageCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newMessagingImageCommand() *Command {
+	cmd := &Command{
 		Use:   "image",
 		Short: "Image operations",
 	}
@@ -30,11 +28,11 @@ func newMessagingImageCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingImageListCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newMessagingImageListCommand() *Command {
+	cmd := &Command{
 		Use:   "list",
 		Short: "List images",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			app, err := appOrExit(cmd)
 			if err != nil {
 				return err
@@ -49,13 +47,13 @@ func newMessagingImageListCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingImageUploadCommand() *cobra.Command {
+func newMessagingImageUploadCommand() *Command {
 	var imageID string
 	var filePath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "upload",
 		Short: "Upload image",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if imageID == "" {
 				return fmt.Errorf("image-id is required")
 			}
@@ -86,12 +84,12 @@ func newMessagingImageUploadCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingImageDeleteCommand() *cobra.Command {
+func newMessagingImageDeleteCommand() *Command {
 	var imageID string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "delete",
 		Short: "Delete image",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if imageID == "" {
 				return fmt.Errorf("image-id is required")
 			}
@@ -111,8 +109,8 @@ func newMessagingImageDeleteCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingMessageCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newMessagingMessageCommand() *Command {
+	cmd := &Command{
 		Use:   "message",
 		Short: "Message operations",
 	}
@@ -122,11 +120,11 @@ func newMessagingMessageCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingMessageListCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newMessagingMessageListCommand() *Command {
+	cmd := &Command{
 		Use:   "list",
 		Short: "List messages",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			app, err := appOrExit(cmd)
 			if err != nil {
 				return err
@@ -141,13 +139,13 @@ func newMessagingMessageListCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingMessageUploadCommand() *cobra.Command {
+func newMessagingMessageUploadCommand() *Command {
 	var messageID string
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "upload",
 		Short: "Upload message",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if messageID == "" {
 				return fmt.Errorf("message-id is required")
 			}
@@ -175,12 +173,12 @@ func newMessagingMessageUploadCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingMessageDeleteCommand() *cobra.Command {
+func newMessagingMessageDeleteCommand() *Command {
 	var messageID string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "delete",
 		Short: "Delete message",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if messageID == "" {
 				return fmt.Errorf("message-id is required")
 			}
@@ -200,8 +198,8 @@ func newMessagingMessageDeleteCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingDefaultCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newMessagingDefaultCommand() *Command {
+	cmd := &Command{
 		Use:   "default",
 		Short: "Default message configuration",
 	}
@@ -210,14 +208,14 @@ func newMessagingDefaultCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingDefaultConfigureCommand() *cobra.Command {
+func newMessagingDefaultConfigureCommand() *Command {
 	var productID string
 	var locale string
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "configure",
 		Short: "Configure default message",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if productID == "" || locale == "" {
 				return fmt.Errorf("product-id and locale are required")
 			}
@@ -246,13 +244,13 @@ func newMessagingDefaultConfigureCommand() *cobra.Command {
 	return cmd
 }
 
-func newMessagingDefaultDeleteCommand() *cobra.Command {
+func newMessagingDefaultDeleteCommand() *Command {
 	var productID string
 	var locale string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "delete",
 		Short: "Delete default message",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if productID == "" || locale == "" {
 				return fmt.Errorf("product-id and locale are required")
 			}

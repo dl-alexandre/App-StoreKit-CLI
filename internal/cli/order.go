@@ -2,12 +2,10 @@ package cli
 
 import (
 	"fmt"
-
-	"github.com/spf13/cobra"
 )
 
-func newOrderCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newOrderCommand() *Command {
+	cmd := &Command{
 		Use:     "order",
 		Short:   "Order operations",
 		Aliases: []string{"ord"},
@@ -17,12 +15,12 @@ func newOrderCommand() *cobra.Command {
 	return cmd
 }
 
-func newOrderLookupCommand() *cobra.Command {
+func newOrderLookupCommand() *Command {
 	var orderID string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "lookup",
 		Short: "Look up order id",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if orderID == "" {
 				return fmt.Errorf("order-id is required")
 			}

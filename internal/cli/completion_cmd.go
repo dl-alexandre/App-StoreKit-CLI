@@ -2,12 +2,10 @@ package cli
 
 import (
 	"os"
-
-	"github.com/spf13/cobra"
 )
 
-func newCompletionCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newCompletionCommand() *Command {
+	cmd := &Command{
 		Use:   "completion",
 		Short: "Generate shell completion scripts",
 	}
@@ -19,11 +17,11 @@ func newCompletionCommand() *cobra.Command {
 	return cmd
 }
 
-func newCompletionShellCommand(shell string) *cobra.Command {
-	return &cobra.Command{
+func newCompletionShellCommand(shell string) *Command {
+	return &Command{
 		Use:   shell,
 		Short: "Generate " + shell + " completions",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			switch shell {
 			case "bash":
 				return cmd.Root().GenBashCompletion(os.Stdout)

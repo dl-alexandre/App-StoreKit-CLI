@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/dl-alexandre/cli-tools/version"
-	"github.com/spf13/cobra"
 )
 
 // Build-time variables (re-exported from cli-tools/version for backward compatibility)
@@ -30,12 +29,12 @@ func init() {
 	version.BinaryName = "ask"
 }
 
-func newVersionCommand() *cobra.Command {
-	return &cobra.Command{
+func newVersionCommand() *Command {
+	return &Command{
 		Use:   "version",
 		Short: "Print the ask version",
-		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
+		Args:  NoArgs,
+		Run: func(cmd *Command, args []string) {
 			fmt.Fprintln(cmd.OutOrStdout(), version.DetailedString())
 		},
 	}

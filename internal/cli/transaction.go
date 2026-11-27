@@ -5,11 +5,10 @@ import (
 	"strings"
 
 	"github.com/dl-alexandre/App-StoreKit-CLI/internal/validate"
-	"github.com/spf13/cobra"
 )
 
-func newTransactionCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newTransactionCommand() *Command {
+	cmd := &Command{
 		Use:     "transaction",
 		Short:   "Transaction operations",
 		Aliases: []string{"tx"},
@@ -22,12 +21,12 @@ func newTransactionCommand() *cobra.Command {
 	return cmd
 }
 
-func newTransactionGetCommand() *cobra.Command {
+func newTransactionGetCommand() *Command {
 	var transactionID string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "get",
 		Short: "Get transaction info",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if transactionID == "" {
 				return fmt.Errorf("transaction-id is required")
 			}
@@ -47,7 +46,7 @@ func newTransactionGetCommand() *cobra.Command {
 	return cmd
 }
 
-func newTransactionHistoryCommand() *cobra.Command {
+func newTransactionHistoryCommand() *Command {
 	var transactionID string
 	var revision string
 	var startDate string
@@ -59,11 +58,11 @@ func newTransactionHistoryCommand() *cobra.Command {
 	var ownershipType string
 	var revoked optionalBool
 	var version string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:     "history",
 		Short:   "Get transaction history",
 		Aliases: []string{"hist"},
-		PreRunE: func(cmd *cobra.Command, args []string) error {
+		PreRunE: func(cmd *Command, args []string) error {
 			var err error
 			version, err = validate.NormalizeOne("transaction.history.version", version)
 			if err != nil {
@@ -83,7 +82,7 @@ func newTransactionHistoryCommand() *cobra.Command {
 			}
 			return nil
 		},
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if transactionID == "" {
 				return fmt.Errorf("transaction-id is required")
 			}
@@ -148,12 +147,12 @@ func newTransactionHistoryCommand() *cobra.Command {
 	return cmd
 }
 
-func newTransactionAppCommand() *cobra.Command {
+func newTransactionAppCommand() *Command {
 	var transactionID string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "app",
 		Short: "Get app transaction info",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if transactionID == "" {
 				return fmt.Errorf("transaction-id is required")
 			}
@@ -173,13 +172,13 @@ func newTransactionAppCommand() *cobra.Command {
 	return cmd
 }
 
-func newTransactionAppAccountTokenCommand() *cobra.Command {
+func newTransactionAppAccountTokenCommand() *Command {
 	var originalTransactionID string
 	var bodyPath string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "app-account-token",
 		Short: "Set app account token",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if originalTransactionID == "" {
 				return fmt.Errorf("original-transaction-id is required")
 			}

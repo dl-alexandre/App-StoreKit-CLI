@@ -8,11 +8,10 @@ import (
 	"strings"
 
 	"github.com/dl-alexandre/App-StoreKit-CLI/internal/config"
-	"github.com/spf13/cobra"
 )
 
-func newConfigCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newConfigCommand() *Command {
+	cmd := &Command{
 		Use:   "config",
 		Short: "Manage configuration",
 	}
@@ -22,12 +21,12 @@ func newConfigCommand() *cobra.Command {
 	return cmd
 }
 
-func newConfigInitCommand() *cobra.Command {
+func newConfigInitCommand() *Command {
 	var path string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "init",
 		Short: "Initialize config file",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			return runConfigInit(path)
 		},
 	}
@@ -35,11 +34,11 @@ func newConfigInitCommand() *cobra.Command {
 	return cmd
 }
 
-func newConfigValidateCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newConfigValidateCommand() *Command {
+	cmd := &Command{
 		Use:   "validate",
 		Short: "Validate configuration",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			cfgPath, _ := cmd.Root().PersistentFlags().GetString("config")
 			cfg, err := config.Load(config.Options{ConfigPath: cfgPath})
 			if err != nil {

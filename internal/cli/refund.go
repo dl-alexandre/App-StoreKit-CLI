@@ -2,12 +2,10 @@ package cli
 
 import (
 	"fmt"
-
-	"github.com/spf13/cobra"
 )
 
-func newRefundCommand() *cobra.Command {
-	cmd := &cobra.Command{
+func newRefundCommand() *Command {
+	cmd := &Command{
 		Use:     "refund",
 		Short:   "Refund operations",
 		Aliases: []string{"ref"},
@@ -17,13 +15,13 @@ func newRefundCommand() *cobra.Command {
 	return cmd
 }
 
-func newRefundHistoryCommand() *cobra.Command {
+func newRefundHistoryCommand() *Command {
 	var transactionID string
 	var revision string
-	cmd := &cobra.Command{
+	cmd := &Command{
 		Use:   "history",
 		Short: "Get refund history",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *Command, args []string) error {
 			if transactionID == "" {
 				return fmt.Errorf("transaction-id is required")
 			}
