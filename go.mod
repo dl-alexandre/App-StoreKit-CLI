@@ -7,7 +7,7 @@ require (
 	github.com/dl-alexandre/cli-tools v0.0.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/itchyny/gojq v0.12.20
-	github.com/jedib0t/go-pretty/v6 v6.8.3
+	github.com/jedib0t/go-pretty/v6 v6.9.3
 	github.com/spf13/viper v1.21.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -19,6 +19,7 @@ require (
 	github.com/itchyny/timefmt-go v0.1.9 // indirect
 	github.com/mattn/go-runewidth v0.0.31 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
